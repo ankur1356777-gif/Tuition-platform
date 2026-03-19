@@ -1,0 +1,47 @@
+{
+    "project_info": {
+        "project_number": "622315910156",
+        "project_id": "tuition-3c732",
+        "storage_bucket": "tuition-3c732.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:622315910156:android:c57056bcc9174c4135aa29",
+                "android_client_info": {
+                    "package_name": "com.tuition.tuitionuser"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "622315910156-1pafhkqv3bdlh62asumuoevl1c9vmofb.apps.googleusercontent.com",
+                    "client_type": 1,
+                    "android_info": {
+                        "package_name": "com.tuition.tuitionuser",
+                        "certificate_hash": "180cdda2cffef925a842d2f8fe16a8082bbc28de"
+                    }
+                },
+                {
+                    "client_id": "622315910156-l595p4ml4shfkl95c11ksarjqcs6qf50.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyC-Szak7J1-UeFli_ozJeO2PQqaIfVxe40"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "622315910156-l595p4ml4shfkl95c11ksarjqcs6qf50.apps.googleusercontent.com",
+                            "client_type": 3
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
