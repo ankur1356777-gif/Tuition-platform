@@ -1,0 +1,255 @@
+@extends('layouts.admin')
+
+@section('title', 'System Settings')
+
+@section('content')
+<div class="page-header">
+    <div>
+        <div class="breadcrumb">Settings / System</div>
+        <h1 class="page-title">System Settings</h1>
+    </div>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success" style="padding: 15px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
+        {{ session('success') }}
+    </div>
+@endif
+
+<div class="settings-container" style="max-width: 1200px; margin: 0 auto;">
+    
+    <!-- WhatsApp Settings -->
+    <div class="card" style="margin-bottom: 30px; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="color: #25D366; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fab fa-whatsapp"></i> WhatsApp Integration
+        </h2>
+        <form action="{{ route('admin.system-settings.update') }}" method="POST">
+            @csrf
+            <input type="hidden" name="group" value="whatsapp">
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Enable WhatsApp Notifications</label>
+                <select name="whatsapp_enabled" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                    <option value="0" {{ ($settings['whatsapp']['whatsapp_enabled'] ?? '0') == '0' ? 'selected' : '' }}>Disabled</option>
+                    <option value="1" {{ ($settings['whatsapp']['whatsapp_enabled'] ?? '0') == '1' ? 'selected' : '' }}>Enabled</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">WhatsApp API URL</label>
+                <input type="url" name="whatsapp_api_url" class="form-control" 
+                       value="{{ $settings['whatsapp']['whatsapp_api_url'] ?? '' }}"
+                       placeholder="https://api.whatsapp.com/send"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">Your WhatsApp gateway API endpoint</small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">WhatsApp API Key</label>
+                <input type="text" name="whatsapp_api_key" class="form-control" 
+                       value="{{ $settings['whatsapp']['whatsapp_api_key'] ?? '' }}"
+                       placeholder="Your API Key"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">Authentication key for WhatsApp API</small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">WhatsApp Sender Number</label>
+                <input type="text" name="whatsapp_sender_number" class="form-control" 
+                       value="{{ $settings['whatsapp']['whatsapp_sender_number'] ?? '' }}"
+                       placeholder="+91XXXXXXXXXX"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">WhatsApp Business number (with country code)</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background: #25D366; color: white; padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-save"></i> Save WhatsApp Settings
+            </button>
+        </form>
+    </div>
+
+    <!-- SMS Settings -->
+    <div class="card" style="margin-bottom: 30px; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="color: #4f46e5; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-sms"></i> SMS Gateway Integration
+        </h2>
+        <form action="{{ route('admin.system-settings.update') }}" method="POST">
+            @csrf
+            <input type="hidden" name="group" value="sms">
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Enable SMS Notifications</label>
+                <select name="sms_enabled" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                    <option value="0" {{ ($settings['sms']['sms_enabled'] ?? '0') == '0' ? 'selected' : '' }}>Disabled</option>
+                    <option value="1" {{ ($settings['sms']['sms_enabled'] ?? '0') == '1' ? 'selected' : '' }}>Enabled</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMS Gateway Provider</label>
+                <select name="sms_provider" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                    <option value="twilio" {{ ($settings['sms']['sms_provider'] ?? '') == 'twilio' ? 'selected' : '' }}>Twilio</option>
+                    <option value="msg91" {{ ($settings['sms']['sms_provider'] ?? '') == 'msg91' ? 'selected' : '' }}>MSG91</option>
+                    <option value="textlocal" {{ ($settings['sms']['sms_provider'] ?? '') == 'textlocal' ? 'selected' : '' }}>TextLocal</option>
+                    <option value="custom" {{ ($settings['sms']['sms_provider'] ?? '') == 'custom' ? 'selected' : '' }}>Custom Gateway</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMS API URL</label>
+                <input type="url" name="sms_api_url" class="form-control" 
+                       value="{{ $settings['sms']['sms_api_url'] ?? '' }}"
+                       placeholder="https://api.smsgateway.com/send"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">Your SMS gateway API endpoint</small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMS API Key / Auth Token</label>
+                <input type="text" name="sms_api_key" class="form-control" 
+                       value="{{ $settings['sms']['sms_api_key'] ?? '' }}"
+                       placeholder="Your API Key or Auth Token"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">Authentication key for SMS API</small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMS Sender ID</label>
+                <input type="text" name="sms_sender_id" class="form-control" 
+                       value="{{ $settings['sms']['sms_sender_id'] ?? '' }}"
+                       placeholder="TUITION"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                <small style="color: #666; font-size: 12px;">Sender ID that appears in SMS (6 characters max)</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background: #4f46e5; color: white; padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-save"></i> Save SMS Settings
+            </button>
+        </form>
+    </div>
+
+    <!-- Email Settings -->
+    <div class="card" style="margin-bottom: 30px; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="color: #ea4335; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-envelope"></i> Email Configuration
+        </h2>
+        <form action="{{ route('admin.system-settings.update') }}" method="POST">
+            @csrf
+            <input type="hidden" name="group" value="email">
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMTP Host</label>
+                <input type="text" name="mail_host" class="form-control" 
+                       value="{{ $settings['email']['mail_host'] ?? env('MAIL_HOST', '') }}"
+                       placeholder="smtp.gmail.com"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+            </div>
+
+            <div class="row" style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <div class="col" style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMTP Port</label>
+                    <input type="number" name="mail_port" class="form-control" 
+                           value="{{ $settings['email']['mail_port'] ?? env('MAIL_PORT', '587') }}"
+                           placeholder="587"
+                           style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                </div>
+                <div class="col" style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Encryption</label>
+                    <select name="mail_encryption" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                        <option value="tls" {{ ($settings['email']['mail_encryption'] ?? 'tls') == 'tls' ? 'selected' : '' }}>TLS</option>
+                        <option value="ssl" {{ ($settings['email']['mail_encryption'] ?? 'tls') == 'ssl' ? 'selected' : '' }}>SSL</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMTP Username</label>
+                <input type="text" name="mail_username" class="form-control" 
+                       value="{{ $settings['email']['mail_username'] ?? env('MAIL_USERNAME', '') }}"
+                       placeholder="your-email@gmail.com"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">SMTP Password</label>
+                <input type="password" name="mail_password" class="form-control" 
+                       value="{{ $settings['email']['mail_password'] ?? env('MAIL_PASSWORD', '') }}"
+                       placeholder="••••••••"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">From Email</label>
+                <input type="email" name="mail_from_address" class="form-control" 
+                       value="{{ $settings['email']['mail_from_address'] ?? env('MAIL_FROM_ADDRESS', '') }}"
+                       placeholder="noreply@tuitionplatform.com"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">From Name</label>
+                <input type="text" name="mail_from_name" class="form-control" 
+                       value="{{ $settings['email']['mail_from_name'] ?? env('MAIL_FROM_NAME', 'Tuition Platform') }}"
+                       placeholder="Tuition Platform"
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background: #ea4335; color: white; padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-save"></i> Save Email Settings
+            </button>
+        </form>
+    </div>
+
+    <!-- Test Section -->
+    <div class="card" style="padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: #f8f9fa;">
+        <h2 style="color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-vial"></i> Test Notifications
+        </h2>
+        <p style="color: #666; margin-bottom: 20px;">Send test notifications to verify your configuration</p>
+        
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <form action="{{ route('admin.test-whatsapp') }}" method="POST" style="display: inline;">
+                @csrf
+                <input type="text" name="phone" placeholder="+91XXXXXXXXXX" required 
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-right: 10px;">
+                <button type="submit" class="btn" style="background: #25D366; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">
+                    <i class="fab fa-whatsapp"></i> Test WhatsApp
+                </button>
+            </form>
+
+            <form action="{{ route('admin.test-sms') }}" method="POST" style="display: inline;">
+                @csrf
+                <input type="text" name="phone" placeholder="+91XXXXXXXXXX" required 
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-right: 10px;">
+                <button type="submit" class="btn" style="background: #4f46e5; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-sms"></i> Test SMS
+                </button>
+            </form>
+
+            <form action="{{ route('admin.test-email') }}" method="POST" style="display: inline;">
+                @csrf
+                <input type="email" name="email" placeholder="test@example.com" required 
+                       style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-right: 10px;">
+                <button type="submit" class="btn" style="background: #ea4335; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-envelope"></i> Test Email
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .form-control:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        transition: all 0.2s;
+    }
+</style>
+@endsection
